@@ -1,0 +1,67 @@
+// ============================================================
+// DAX Measures — Territory Sales Report
+// SSRS Source: Territory_Sales_Report.rdl
+//
+// Table: SalesTerritory (from Power Query 02_territory_sales_power_query.m)
+// ============================================================
+
+// ----------------------------------------------------------
+// Core aggregations
+// SSRS equivalent: column footer totals (Sum)
+// ----------------------------------------------------------
+
+Total Sales YTD =
+    SUM(SalesTerritory[SalesYTD])
+
+Total Sales Last Year =
+    SUM(SalesTerritory[SalesLastYear])
+
+// ----------------------------------------------------------
+// Year-over-Year growth — NEW INSIGHT vs SSRS
+// SSRS had no built-in YoY calculation; users had to export to Excel
+// Power BI: instant, interactive, filterable
+// ----------------------------------------------------------
+
+YoY Sales Growth $ =
+    [Total Sales YTD] - [Total Sales Last Year]
+
+YoY Sales Growth % =
+    DIVIDE(
+        [YoY Sales Growth $],
+        [Total Sales Last Year],
+        0
+    )
+
+YoY Growth Label =
+    VAR Pct = [YoY Sales Growth %]
+    RETURN
+        FORMAT(Pct, "+0.0%;-0.0%;0.0%")
+
+// ----------------------------------------------------------
+// Territory count
+// ----------------------------------------------------------
+
+Territory Count =
+    COUNTROWS(SalesTerritory)
+
+// ----------------------------------------------------------
+// Top territory — NEW insight enabled by Power BI
+// ----------------------------------------------------------
+
+Top Territory by YTD =
+    CALCULATE(
+        SELECTEDVALUE(SalesTerritory[TerritoryName], "Multiple"),
+        TOPN(1, SalesTerritory, SalesTerritory[SalesYTD], DESC)
+    )
+
+// ----------------------------------------------------------
+// Group-level aggregation
+// SSRS equivalent: group header/footer totals
+// In Power BI: use TerritoryGroup as slicer or matrix row group
+// ----------------------------------------------------------
+
+Group Sales YTD =
+    CALCULATE(
+        [Total Sales YTD],
+        ALLEXCEPT(SalesTerritory, SalesTerritory[TerritoryGroup])
+    )

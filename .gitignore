@@ -1,0 +1,29 @@
+# SQLite database file
+*.db
+*.sqlite
+*.sqlite3
+
+# Power BI files (don't commit .pbix — they're binary and contain credentials)
+*.pbix
+
+# Environment / secrets
+.env
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor directories
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Logs
+*.log
+
+# Temp files
+*.tmp
+~$*

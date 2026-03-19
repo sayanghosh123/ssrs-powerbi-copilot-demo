@@ -1,0 +1,98 @@
+// ============================================================
+// DAX Measures — Salesperson Summary Report
+// SSRS Source: Salesperson_Summary_Report.rdl
+//
+// Table: SalesPerson (from 03_salesperson_summary_power_query.m)
+//
+// In SSRS this report grouped by TerritoryName with group-level
+// subtotals. In Power BI this becomes a Matrix visual with
+// TerritoryName as a row group, and these measures as values.
+// ============================================================
+
+// ----------------------------------------------------------
+// Core aggregations
+// SSRS equivalent: detail row values + group subtotals
+// ----------------------------------------------------------
+
+SP Total Sales YTD =
+    SUM(SalesPerson[SalesYTD])
+
+SP Total Sales Last Year =
+    SUM(SalesPerson[SalesLastYear])
+
+SP Total Bonus =
+    SUM(SalesPerson[Bonus])
+
+SP Total Quota =
+    SUM(SalesPerson[SalesQuota])
+
+// ----------------------------------------------------------
+// Commission — average at group/total level
+// SSRS: =Avg(Fields!CommissionPct.Value) in group header
+// ----------------------------------------------------------
+
+SP Avg Commission Pct =
+    AVERAGE(SalesPerson[CommissionPct])
+
+SP Avg Commission Pct Label =
+    FORMAT([SP Avg Commission Pct], "0.00%")
+
+// ----------------------------------------------------------
+// Quota attainment — NEW insight vs SSRS
+// Shows % of quota achieved; SSRS only showed raw values
+// ----------------------------------------------------------
+
+Quota Attainment % =
+    DIVIDE(
+        [SP Total Sales YTD],
+        [SP Total Quota],
+        0
+    )
+
+Quota Attainment Label =
+    FORMAT([Quota Attainment %], "0.0%")
+
+// ----------------------------------------------------------
+// Year-over-Year — NEW insight vs SSRS
+// ----------------------------------------------------------
+
+SP YoY Sales $ =
+    [SP Total Sales YTD] - [SP Total Sales Last Year]
+
+SP YoY Sales % =
+    DIVIDE(
+        [SP YoY Sales $],
+        [SP Total Sales Last Year],
+        0
+    )
+
+// ----------------------------------------------------------
+// Territory-level context measures
+// SSRS equivalent: group header row (TerritoryName, PowderBlue)
+// In Power BI: Matrix visual row group automatically creates
+//              subtotal rows at territory level
+// ----------------------------------------------------------
+
+Territory Sales YTD =
+    CALCULATE(
+        [SP Total Sales YTD],
+        ALLEXCEPT(SalesPerson, SalesPerson[TerritoryName])
+    )
+
+Territory Salesperson Count =
+    CALCULATE(
+        COUNTROWS(SalesPerson),
+        ALLEXCEPT(SalesPerson, SalesPerson[TerritoryName])
+    )
+
+// ----------------------------------------------------------
+// Salespersons without territory
+// SSRS: ISNULL handled in SQL → '*No Territory'
+// Power BI: filter or visual indicator
+// ----------------------------------------------------------
+
+Unassigned SP Count =
+    CALCULATE(
+        COUNTROWS(SalesPerson),
+        SalesPerson[TerritoryName] = "*No Territory"
+    )

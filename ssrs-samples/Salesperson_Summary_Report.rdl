@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df"
+        xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition"
+        xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner"
+        xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+
+  <!-- ============================================================
+       DATASET: References shared dataset SalesPerson.rsd
+       SQL (in SalesPerson.rsd):
+         SELECT SP.TerritoryID,
+                ISNULL(ST.Name,'*No Territory') AS TerritoryName,
+                SP.BusinessEntityID, P.FirstName, P.LastName,
+                P.FirstName + ' ' + P.LastName AS SalesPersonName,
+                SP.SalesQuota, SP.Bonus, SP.CommissionPct, SP.SalesYTD, SP.SalesLastYear
+         FROM Sales.SalesPerson SP
+         INNER JOIN Person.Person P ON SP.BusinessEntityID = P.BusinessEntityID
+         LEFT OUTER JOIN Sales.SalesTerritory ST ON SP.TerritoryID = ST.TerritoryID
+       SSRS Features demonstrated:
+         - Grouped by TerritoryName (territory header row spans 2 columns, PowderBlue background)
+         - ISNULL() → Power BI: Table.ReplaceValue or if [TerritoryName] = null then "*No Territory"
+       ============================================================ -->
+  <DataSets>
+    <DataSet Name="SalesPerson">
+      <SharedDataSet>
+        <SharedDataSetReference>SalesPerson</SharedDataSetReference>
+      </SharedDataSet>
+      <Fields>
+        <Field Name="TerritoryID"><DataField>TerritoryID</DataField><rd:TypeName>System.Int32</rd:TypeName></Field>
+        <Field Name="TerritoryName"><DataField>TerritoryName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="BusinessEntityID"><DataField>BusinessEntityID</DataField><rd:TypeName>System.Int32</rd:TypeName></Field>
+        <Field Name="FirstName"><DataField>FirstName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="LastName"><DataField>LastName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="SalesPersonName"><DataField>SalesPersonName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="SalesQuota"><DataField>SalesQuota</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+        <Field Name="Bonus"><DataField>Bonus</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+        <Field Name="CommissionPct"><DataField>CommissionPct</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+        <Field Name="SalesYTD"><DataField>SalesYTD</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+        <Field Name="SalesLastYear"><DataField>SalesLastYear</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn><Width>1.39in</Width></TablixColumn>  <!-- Territory Name (grouped) -->
+                <TablixColumn><Width>1.92in</Width></TablixColumn>  <!-- Sales Person Name -->
+                <TablixColumn><Width>1.64in</Width></TablixColumn>  <!-- Sales Quota -->
+                <TablixColumn><Width>1.26in</Width></TablixColumn>  <!-- Bonus -->
+                <TablixColumn><Width>1.57in</Width></TablixColumn>  <!-- Commission Pct -->
+                <TablixColumn><Width>1.26in</Width></TablixColumn>  <!-- Sales YTD -->
+                <TablixColumn><Width>1.81in</Width></TablixColumn>  <!-- Sales Last Year -->
+              </TablixColumns>
+              <TablixRows>
+                <!-- Header Row -->
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell><CellContents><Textbox Name="hdrTerritory"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Territory Name</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrSPName"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Sales Person Name</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrQuota"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Sales Quota</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrBonus"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Bonus</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrCommission"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Commission Pct</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrSalesYTD"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Sales YTD</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrSalesLY"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Sales Last Year</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <!-- Territory Group Header Row (PowderBlue, spans 2 cols) -->
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="fldTerritoryName">
+                          <Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!TerritoryName.Value</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs>
+                          <Style><BackgroundColor>PowderBlue</BackgroundColor></Style>
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell/>
+                    <TablixCell><CellContents><Textbox Name="grpQuota"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Sum(Fields!SalesQuota.Value)</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C0</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="grpBonus"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Sum(Fields!Bonus.Value)</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C0</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="grpCommission"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Avg(Fields!CommissionPct.Value)</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>P2</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="grpSalesYTD"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Sum(Fields!SalesYTD.Value)</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C0</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="grpSalesLY"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Sum(Fields!SalesLastYear.Value)</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C0</Format></Style></Textbox></CellContents></TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <!-- Detail Row -->
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell><CellContents><Textbox Name="fldEmpty"><Paragraphs><Paragraph><TextRuns><TextRun><Value/></TextRun></TextRuns></Paragraph></Paragraphs></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldSPName"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!SalesPersonName.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldQuota"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!SalesQuota.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C0</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldBonus"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!Bonus.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C0</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldCommission"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!CommissionPct.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>P2</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldSalesYTD"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!SalesYTD.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C0</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldSalesLY"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!SalesLastYear.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C0</Format></Style></Textbox></CellContents></TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember><TablixHeader><Size>0in</Size></TablixHeader></TablixMember>
+                <TablixMember>
+                  <Group Name="TerritoryGroup">
+                    <GroupExpressions><GroupExpression>=Fields!TerritoryName.Value</GroupExpression></GroupExpressions>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember><Group Name="Detail"/></TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember/><TablixMember/><TablixMember/><TablixMember/>
+                <TablixMember/><TablixMember/><TablixMember/>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <DataSetName>SalesPerson</DataSetName>
+          </Tablix>
+        </ReportItems>
+        <Height>2in</Height>
+      </Body>
+      <Width>11in</Width>
+      <Page>
+        <PageHeight>8.5in</PageHeight>
+        <PageWidth>14in</PageWidth>
+        <LeftMargin>1in</LeftMargin><RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin><BottomMargin>1in</BottomMargin>
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <Language>en-US</Language>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+</Report>

@@ -1,0 +1,82 @@
+// ============================================================
+// DAX Measures — Orders by Salesperson
+// SSRS Source: Orders_Made_by_Salesperson.rdl
+//
+// In SSRS, aggregations were implicit (rendered at report level).
+// In Power BI, these become explicit DAX measures on the
+// 'SalesOrders' table (rename your Power Query output accordingly).
+// ============================================================
+
+// ----------------------------------------------------------
+// Basic aggregations
+// SSRS equivalent: column footers / report totals
+// ----------------------------------------------------------
+
+Total SubTotal =
+    SUM(SalesOrders[SubTotal])
+
+Total Tax Amount =
+    SUM(SalesOrders[TaxAmt])
+
+Total Freight =
+    SUM(SalesOrders[Freight])
+
+Total Due =
+    SUM(SalesOrders[SubTotal])
+    + SUM(SalesOrders[TaxAmt])
+    + SUM(SalesOrders[Freight])
+
+// ----------------------------------------------------------
+// Count measures
+// SSRS equivalent: =CountRows() in report footer
+// ----------------------------------------------------------
+
+Order Count =
+    COUNTROWS(SalesOrders)
+
+Shipped Order Count =
+    CALCULATE(
+        COUNTROWS(SalesOrders),
+        SalesOrders[orderStatus] = "Shipped"
+    )
+
+// ----------------------------------------------------------
+// Average / per-salesperson metrics
+// No SSRS equivalent — new insight enabled by Power BI
+// ----------------------------------------------------------
+
+Avg Order Value =
+    DIVIDE(
+        [Total Due],
+        [Order Count],
+        0
+    )
+
+// ----------------------------------------------------------
+// YTD measures
+// SSRS: no built-in YTD unless using date parameters
+// Power BI: time intelligence with a Date table
+// ----------------------------------------------------------
+
+Total Due YTD =
+    TOTALYTD(
+        [Total Due],
+        'Date'[Date]    -- requires a Date table in your model
+    )
+
+// ----------------------------------------------------------
+// Status breakdown — replaces SSRS sub-grouping
+// Use with a slicer on SalesOrders[orderStatus]
+// ----------------------------------------------------------
+
+Shipped Revenue =
+    CALCULATE(
+        [Total Due],
+        SalesOrders[orderStatus] = "Shipped"
+    )
+
+In Process Revenue =
+    CALCULATE(
+        [Total Due],
+        SalesOrders[orderStatus] = "In Process"
+    )

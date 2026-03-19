@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df"
+        xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition"
+        xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner"
+        xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+
+  <!-- ============================================================
+       DATASET: References shared dataset OrdersBySalesPerson.rsd
+       SQL (in OrdersBySalesPerson.rsd):
+         SELECT SOH.SalesOrderID, SOH.OrderDate, YEAR(SOH.OrderDate) AS OrderYear,
+                SOH.DueDate, SOH.ShipDate,
+                CASE SOH.Status WHEN 1 THEN 'In Process' WHEN 2 THEN 'Approved'
+                  WHEN 3 THEN 'Back Ordered' WHEN 4 THEN 'Rejected'
+                  WHEN 5 THEN 'Shipped' WHEN 6 THEN 'Cancelled' ELSE 'Invalid' END AS orderStatus,
+                SOH.SalesOrderNumber, SOH.SalesPersonID,
+                P.FirstName, P.LastName,
+                SOH.SubTotal, SOH.TaxAmt, SOH.Freight, SOH.TotalDue
+         FROM Sales.SalesOrderHeader SOH
+         INNER JOIN Person.Person P ON SOH.SalesPersonID = P.BusinessEntityID
+       ============================================================ -->
+  <DataSets>
+    <DataSet Name="SalespersonOrdersMade">
+      <SharedDataSet>
+        <SharedDataSetReference>OrdersBySalesPerson</SharedDataSetReference>
+      </SharedDataSet>
+      <Fields>
+        <Field Name="SalesOrderID"><DataField>SalesOrderID</DataField><rd:TypeName>System.Int32</rd:TypeName></Field>
+        <Field Name="OrderDate"><DataField>OrderDate</DataField><rd:TypeName>System.DateTime</rd:TypeName></Field>
+        <Field Name="OrderYear"><DataField>OrderYear</DataField><rd:TypeName>System.Int32</rd:TypeName></Field>
+        <Field Name="DueDate"><DataField>DueDate</DataField><rd:TypeName>System.DateTime</rd:TypeName></Field>
+        <Field Name="ShipDate"><DataField>ShipDate</DataField><rd:TypeName>System.DateTime</rd:TypeName></Field>
+        <Field Name="orderStatus"><DataField>orderStatus</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="SalesOrderNumber"><DataField>SalesOrderNumber</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="SalesPersonID"><DataField>SalesPersonID</DataField><rd:TypeName>System.Int32</rd:TypeName></Field>
+        <Field Name="FirstName"><DataField>FirstName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="LastName"><DataField>LastName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="SubTotal"><DataField>SubTotal</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+        <Field Name="TaxAmt"><DataField>TaxAmt</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+        <Field Name="Freight"><DataField>Freight</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+        <Field Name="TotalDue"><DataField>TotalDue</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn><Width>1.19in</Width></TablixColumn>  <!-- SalesPerson Name -->
+                <TablixColumn><Width>1.17in</Width></TablixColumn>  <!-- Order Date -->
+                <TablixColumn><Width>1.09in</Width></TablixColumn>  <!-- Due Date -->
+                <TablixColumn><Width>1.00in</Width></TablixColumn>  <!-- Ship Date -->
+                <TablixColumn><Width>1.82in</Width></TablixColumn>  <!-- Sales Order Number -->
+                <TablixColumn><Width>1.00in</Width></TablixColumn>  <!-- Order Status -->
+                <TablixColumn><Width>1.18in</Width></TablixColumn>  <!-- Sub Total -->
+                <TablixColumn><Width>1.15in</Width></TablixColumn>  <!-- Tax Amt -->
+                <TablixColumn><Width>1.16in</Width></TablixColumn>  <!-- Freight -->
+                <TablixColumn><Width>1.15in</Width></TablixColumn>  <!-- Total Due -->
+              </TablixColumns>
+              <TablixRows>
+                <!-- Header Row -->
+                <TablixRow>
+                  <Height>0.46in</Height>
+                  <TablixCells>
+                    <TablixCell><CellContents><Textbox Name="hdrName"><Paragraphs><Paragraph><TextRuns><TextRun><Value>SalesPerson Name</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrOrderDate"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Order Date</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrDueDate"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Due Date</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrShipDate"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Ship Date</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrOrderNo"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Sales Order Number</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrStatus"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Order Status</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrSubTotal"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Sub Total</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrTax"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Tax Amt</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrFreight"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Freight</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hdrTotalDue"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Total Due</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><BackgroundColor>Silver</BackgroundColor></Style></Textbox></CellContents></TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <!-- Data Row -->
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell><CellContents><Textbox Name="fldName"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!FirstName.Value &amp; " " &amp; Fields!LastName.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldOrderDate"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!OrderDate.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldDueDate"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!DueDate.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldShipDate"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!ShipDate.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldOrderNo"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!SalesOrderNumber.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldStatus"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!orderStatus.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldSubTotal"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!SubTotal.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C2</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldTax"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!TaxAmt.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C2</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldFreight"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!Freight.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C2</Format></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="fldTotalDue"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!TotalDue.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Format>C2</Format></Style></Textbox></CellContents></TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember><TablixHeader><Size>0in</Size></TablixHeader></TablixMember>
+                <TablixMember><Group Name="Detail"/></TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/>
+                <TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <DataSetName>SalespersonOrdersMade</DataSetName>
+          </Tablix>
+        </ReportItems>
+        <Height>2in</Height>
+      </Body>
+      <Width>12in</Width>
+      <Page>
+        <PageHeight>8.5in</PageHeight>
+        <PageWidth>14in</PageWidth>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+      </Page>
+    </ReportSection>
+  </ReportSections>
+
+  <ReportParametersLayout/>
+  <Language>en-US</Language>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+</Report>
